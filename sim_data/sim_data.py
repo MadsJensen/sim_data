@@ -7,17 +7,17 @@ from statsmodels.tools.eval_measures import mse, rmse
 
 
 # Function to fit higher order polynomial on epochs
-def make_sim_data(epochs, baseline=None, order=10):
+def make_sim_data(epochs, baseline=None, order=10):  # TODO fix baseline param
     """Doc string
 
     params:
     -------
     epochs : Epoch object
-    baseline : tuble
-        Either tuble with the baseline of the epochs or None, if None the
-        baseline from the epochs is used. Defualts to None.
+    baseline : tuple
+        Either tuple with the baseline of the epochs or None, if None the
+        baseline from the epochs is used. Defaults to None.
     order : int
-        The order of the polynomial fitted to the orignal epochs.
+        The order of the polynomial fitted to the original epochs.
 
 
     returns:
@@ -50,11 +50,8 @@ def make_sim_data(epochs, baseline=None, order=10):
     return sim_epochs
 
 
-plt.style.use("seaborn")
-
-
-def AIC(LL, k):
-    aic = (-2 * np.log(LL)) + (2 * k)
+def calc_aic(loglik, k):
+    aic = (-2 * np.log(loglik)) + (2 * k)
     return aic
 
 
@@ -81,12 +78,10 @@ def search_for_best_order(epochs, orders, plot=False):
         r2_res.append(
             r2_score(epochs.get_data().reshape(-1),
                      sim_data.get_data().reshape(-1)))
-        LL = -np.sum(
+        loglik = -np.sum(
             stats.norm.logpdf(epochs.get_data(), loc=sim_data.get_data()))
-        loglik_res.append(LL)
-        aic_res.append(AIC(LL, k=order + 1))
-
-        best_order = orders[np.asarray(mse_res).argmin() + 1]
+        loglik_res.append(loglik)
+        aic_res.append(calc_aic(loglik, k=order + 1))
 
     if plot:
         plt.figure()
@@ -117,4 +112,5 @@ def search_for_best_order(epochs, orders, plot=False):
         plt.plot(orders, aic_res, 'ko')
         plt.title("AIC")
 
+    best_order = orders[np.asarray(mse_res).argmin()]
     return best_order, mse_res, rmse_res, r2_res, aic_res, loglik_res
