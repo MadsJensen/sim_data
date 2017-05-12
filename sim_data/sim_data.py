@@ -51,6 +51,9 @@ def make_sim_data(epochs, baseline=None, order=10):  # TODO fix baseline param
 
 
 def calc_aic(loglik, k):
+    """Calculate the AIC based on log likelihood and the numbers of parameters
+    in the model.
+    """
     aic = (-2 * np.log(loglik)) + (2 * k)
     return aic
 
