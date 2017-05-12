@@ -59,14 +59,19 @@ def calc_aic(loglik, k):
 
 
 def search_for_best_order(epochs, orders, plot=False):
-    """
-    Keyword Arguments:
+    """This runs make_sim_data for each order provided and calculated different
+    measure of fit to see which order polynomial provides the best result.
+    
+    Parameters
+    ----------
     epochs : Epochs object
         The epochs to fit.
     orders : numpy array
         Numpy array with the orders to test.
+    plot : bool
+        If True then plots of the measures of fits will be made. Defaults to
+        False.
     """
-
     mse_res = []
     rmse_res = []
     r2_res = []
