@@ -132,7 +132,16 @@ def _calc_loglike_tf(data, sim_data):
 
 
 def _calc_loglike_epo(data, sim_data):
-    return -np.sum(stats.norm.logpdf(data.get_data()), loc=sim_data.get_data())
+    return -np.sum(stats.norm.logpdf(data.get_data(), loc=sim_data.get_data()))
+
+
+def _r2_score_epo(data, sim_data):
+    return r2_score(data.get_data().reshape(-1),
+                    sim_data.get_data().reshape(-1))
+
+
+def _r2_score_tf(data, sim_data):
+    return r2_score(data.data.reshape(-1), sim_data.data.reshape(-1))
 
 
 def search_for_best_order(data, orders, baseline=None, plot=False):
@@ -170,21 +179,17 @@ def search_for_best_order(data, orders, baseline=None, plot=False):
             rmse_res.append(_calc_rmse_epo(data, sim_data))
             loglik_res.append(_calc_loglike_epo(data, sim_data))
             aic_res.append(_calc_aic(loglik_res[-1], k=order))
+            r2_res.append(_r2_score_epo(data, sim_data))
         elif isinstance(data, mne.time_frequency.AverageTFR):
             sim_data = _make_sim_data_tf(data, baseline, order)
             mse_res.append(_calc_mse_tf(data, sim_data))
             rmse_res.append(_calc_rmse_tf(data, sim_data))
             loglik_res.append(_calc_loglike_tf(data, sim_data))
             aic_res.append(_calc_aic(loglik_res[-1], k=order))
+            r2_res.append(_r2_score_tf(data, sim_data))
         else:
             print("data missing")
             return
-        # r2_res.append(
-        #     r2_score(data.get_data().reshape(-1),
-        #              sim_data.get_data().reshape(-1)))
-
-        # loglik_res.append(loglik)
-        # aic_res.append(_calc_aic(loglik, k=order + 1))
 
     if plot:
         plt.figure()
