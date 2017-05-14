@@ -12,7 +12,6 @@ from matplotlib import pyplot as plt
 import mne
 from mne.datasets import somato
 from mne import create_info, EpochsArray
-from mne.baseline import rescale
 from mne.time_frequency import (tfr_multitaper, tfr_morlet)
 
 
