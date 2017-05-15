@@ -5,15 +5,13 @@ http://martinos.org/mne/stable/auto_examples/time_frequency/plot_time_frequency_
 @author: mje
 @email mads [] cfin.au.dk
 """
-import numpy as np
-from matplotlib import pyplot as plt
-
-
 import mne
-from mne.datasets import somato
+import numpy as np
 from mne import create_info, EpochsArray
-from mne.time_frequency import (tfr_multitaper, tfr_morlet)
+from mne.datasets import somato
+from mne.time_frequency import (tfr_multitaper)
 
+import sim_data as sd  # Might need some tweaking to work!
 
 sfreq = 1000.0
 ch_names = ['SIM0001', 'SIM0002']
@@ -57,7 +55,6 @@ power = tfr_multitaper(epochs, freqs=freqs, n_cycles=n_cycles,
 # Plot results. Baseline correct based on first 100 ms.
 power.plot([0], baseline=(0., 0.1), mode='mean', vmin=-1., vmax=3.,
            title='Sim: Least smoothing, most variance')
-
 
 # (2) Less frequency smoothing, more time smoothing.
 n_cycles = freqs  # Increase time-window length to 1 second.
@@ -135,7 +132,7 @@ gamma_diff.plot_joint()
 theta_sim.average().plot_joint()
 theta_data.average().plot_joint()
 theta_diff = mne.combine_evoked([theta_data.average(), -theta_sim.average()],
-                                 weights="equal")
+                                weights="equal")
 theta_diff.plot_joint()
 
 alpha_sim.average().plot_joint()
@@ -143,4 +140,3 @@ alpha_data.average().plot_joint()
 alpha_diff = mne.combine_evoked([alpha_data.average(), -alpha_sim.average()],
                                 weights="equal")
 alpha_diff.plot_joint()
-

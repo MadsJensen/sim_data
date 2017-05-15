@@ -23,7 +23,7 @@ def make_sim_data(data, baseline=None, order=10):
     return
     ------
     """
-
+    # Check for data type and call appropriate function.
     if isinstance(data, mne.epochs.Epochs) or \
             isinstance(data, mne.epochs.EpochsArray):
         sim_data = _make_sim_data_epochs(data, baseline=baseline, order=order)
@@ -188,8 +188,7 @@ def search_for_best_order(data, orders, baseline=None, plot=False):
             aic_res.append(_calc_aic(loglik_res[-1], k=order))
             r2_res.append(_r2_score_tf(data, sim_data))
         else:
-            print("data missing")
-            return
+            raise RuntimeError("data missing")
 
     if plot:
         plt.figure()
@@ -204,24 +203,24 @@ def search_for_best_order(data, orders, baseline=None, plot=False):
                  mse_res[np.asarray(mse_res).argmin()], 'ro')
         plt.title("MSE")
 
-        # plt.figure()
-        # plt.plot(orders, r2_res, 'ko')
-        # plt.plot(orders[np.asarray(r2_res).argmax()],
-        #          r2_res[np.asarray(r2_res).argmax()], 'ro')
-        # plt.title("r^2")
-        #
-        # plt.figure()
-        # plt.plot(orders, loglik_res, 'ko')
-        # plt.plot(orders[np.asarray(loglik_res).argmin()],
-        #          loglik_res[np.asarray(loglik_res).argmin()], 'ro')
-        # plt.title("LogLikelihood")
-        #
-        # plt.figure()
-        # plt.plot(orders, aic_res, 'ko')
-        # plt.title("AIC")
+        plt.figure()
+        plt.plot(orders, r2_res, 'ko')
+        plt.plot(orders[np.asarray(r2_res).argmax()],
+                 r2_res[np.asarray(r2_res).argmax()], 'ro')
+        plt.title("r^2")
+
+        plt.figure()
+        plt.plot(orders, loglik_res, 'ko')
+        plt.plot(orders[np.asarray(loglik_res).argmin()],
+                 loglik_res[np.asarray(loglik_res).argmin()], 'ro')
+        plt.title("LogLikelihood")
+
+        plt.figure()
+        plt.plot(orders, aic_res, 'ko')
+        plt.title("AIC")
 
     best_order = orders[np.asarray(mse_res).argmin()]
     # return best_order, np.asarray(mse_res), np.asarray(rmse_res), \
     #     np.asarray(r2_res), np.asarray(aic_res), np.asarray(loglik_res)
     return best_order, np.asarray(mse_res), np.asarray(rmse_res), \
-           np.asarray(aic_res), np.asarray(loglik_res)
+        np.asarray(aic_res), np.asarray(loglik_res)
